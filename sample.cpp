@@ -21,6 +21,7 @@ struct Input
 {
 	friend istream& operator >> (istream& lhs, Input& rhs)
 	{
+		return lhs;
 	}
 };
 
@@ -28,11 +29,14 @@ struct Output
 {
 	friend ostream& operator << (ostream& lhs, const Output& rhs)
 	{
+		static int case_number = 0;
+		return lhs << "Case #" << ++case_number << ": " << endl;
 	}
 };
 
 Output solve(Input input)
 {
+	return{};
 }
 
 int main(int argc, char* argv[])
