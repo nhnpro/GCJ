@@ -1,5 +1,5 @@
-Case #1: 
-Case #2: 
-Case #3: 
-Case #4: 
-Case #5: 
+Case #1: 2
+Case #2: 1
+Case #3: IMPOSSIBLE
+Case #4: 1 2
+Case #5: 2 16 30

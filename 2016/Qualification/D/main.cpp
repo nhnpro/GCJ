@@ -19,24 +19,62 @@ using namespace std;
 
 struct Input
 {
+	int k, c, s;
+
 	friend istream& operator >> (istream& lhs, Input& rhs)
 	{
-		return lhs;
+		return lhs >> rhs.k >> rhs.c >> rhs.s;
 	}
 };
 
 struct Output
 {
+	vector<long long> ans;
+
 	friend ostream& operator << (ostream& lhs, const Output& rhs)
 	{
 		static int case_number = 0;
-		return lhs << "Case #" << ++case_number << ": " << endl;
+		lhs << "Case #" << ++case_number << ":";
+		if (rhs.ans.empty())
+		{
+			lhs << " IMPOSSIBLE";
+		}
+		else
+		{
+			for (auto& x : rhs.ans)
+			{
+				lhs << ' ' << x;
+			}
+		}
+		return lhs << endl;
 	}
 };
 
 Output solve(Input input)
 {
-	return{};
+	vector<long long> ans;
+	if (input.c == 1)
+	{
+		for (int i = 0; i < input.k; ++i)
+		{
+			ans.push_back(i + 1);
+		}
+	}
+	else
+	{
+		long long pos = min(input.k, 2);
+		for (int i = 0; i < input.k; i += 2)
+		{
+			ans.push_back(pos);
+			pos += min(2, input.k - i - 2);
+			pos += input.k * 2;
+		}
+	}
+	if ((int)ans.size() > input.s)
+	{
+		ans.clear();
+	}
+	return{ ans };
 }
 
 int main(int argc, char* argv[])
