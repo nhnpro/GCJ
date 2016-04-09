@@ -14,6 +14,9 @@
 #include <chrono>
 #include <cstdlib>
 #include <future>
+#include <numeric>
+#include <functional>
+#include <iterator>
 
 using namespace std;
 
