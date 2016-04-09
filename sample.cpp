@@ -1,7 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <ios>
 #include <iostream>
+#include <fstream>
 #include <algorithm>
+#include <string>
 #include <vector>
 #include <stack>
 #include <deque>
@@ -17,7 +19,7 @@ using namespace std;
 
 struct Input
 {
-	friend istream& operator >> (istream& lsh, Input& rhs)
+	friend istream& operator >> (istream& lhs, Input& rhs)
 	{
 	}
 };
@@ -33,21 +35,40 @@ Output solve(Input input)
 {
 }
 
-int main(void)
+int main(int argc, char* argv[])
 {
+	auto start = chrono::system_clock::now();
 	ios_base::sync_with_stdio(false);
+	ifstream fin(argv[1]);
+	ofstream fout(argv[2]);
 	int t;
-	cin >> t;
+	fin >> t;
+	int ready = 0;
 	vector<future<Output>> tasks;
-	while (t-- > 0)
+	mutex cout_mutex;
+	for (int i = 0; i < t; ++i)
 	{
 		Input input;
-		cin >> input;
-		tasks.push_back(std::async(solve, input));
+		fin >> input;
+		tasks.push_back(async([&ready, &t, &cout_mutex](Input input)
+		{
+			auto ans = solve(input);
+			cout_mutex.lock();
+			system("cls");
+			cout << ++ready << "/" << t << endl;
+			cout_mutex.unlock();
+			return ans;
+		}, input));
 	}
 	for (auto& task : tasks)
 	{
-		cout << task.get() << endl;
+		fout << task.get();
 	}
+	auto finish = chrono::system_clock::now();
+	auto elapsed = chrono::duration_cast<chrono::duration<float, std::ratio<1, 1>>>(finish - start);
+	cout << "Done!" << endl;
+	cout << "Time elapsed: " << elapsed.count() << " s" << endl;
+	string s;
+	getline(cin, s);
 	return 0;
 }
