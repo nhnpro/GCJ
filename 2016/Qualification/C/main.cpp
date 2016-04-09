@@ -34,13 +34,13 @@ struct Output
 	friend ostream& operator << (ostream& lhs, const Output& rhs)
 	{
 		static int case_number = 0;
-		lhs << "Case #" << ++case_number << ": " << endl;
+		lhs << "Case #" << ++case_number << ":" << endl;
 		for (auto& coin : rhs.coins)
 		{
-			lhs << coin.first << ' ';
+			lhs << coin.first;
 			for (auto d : coin.second)
 			{
-				lhs << d << ' ';
+				lhs << ' ' << d;
 			}
 			lhs << endl;
 		}
@@ -57,7 +57,7 @@ Output solve(Input input)
 	long long cur = baseline + 1;
 	while ((int)ans.coins.size() < input.j)
 	{
-		if (tasks.size() > 0)
+		if (tasks.size() > 20)
 		{
 			tasks.front().get();
 			tasks.pop();
@@ -89,7 +89,7 @@ Output solve(Input input)
 						break;
 					}
 				}
-				if (i == 9999)
+				if (i == 10000)
 				{
 					return;
 				}
