@@ -19,24 +19,91 @@ using namespace std;
 
 struct Input
 {
+	int n, j;
+
 	friend istream& operator >> (istream& lhs, Input& rhs)
 	{
-		return lhs;
+		return lhs >> rhs.n >> rhs.j;
 	}
 };
 
 struct Output
 {
+	vector<pair<string, vector<int>>> coins;
+
 	friend ostream& operator << (ostream& lhs, const Output& rhs)
 	{
 		static int case_number = 0;
-		return lhs << "Case #" << ++case_number << ": " << endl;
+		lhs << "Case #" << ++case_number << ": " << endl;
+		for (auto& coin : rhs.coins)
+		{
+			lhs << coin.first << ' ';
+			for (auto d : coin.second)
+			{
+				lhs << d << ' ';
+			}
+			lhs << endl;
+		}
+		return lhs;
 	}
 };
 
 Output solve(Input input)
 {
-	return{};
+	Output ans;
+	mutex ans_mutex;
+	long long baseline = 1LL << (input.n - 1);
+	queue<future<void>> tasks;
+	long long cur = baseline + 1;
+	while ((int)ans.coins.size() < input.j)
+	{
+		if (tasks.size() > 0)
+		{
+			tasks.front().get();
+			tasks.pop();
+		}
+		tasks.push(async([&ans_mutex, &ans, &input, cur]()
+		{
+			string s;
+			long long c = cur;
+			while (c > 0)
+			{
+				s.push_back('0' + c % 2);
+				c /= 2;
+			}
+			reverse(s.begin(), s.end());
+			vector<int> div;
+			for (int base = 2; base < 11; ++base)
+			{
+				int i;
+				for (i = 2; i < 10 * 1000; ++i)
+				{
+					int mod = 0;
+					for (char c : s)
+					{
+						mod = (mod * base + (c - '0')) % i;
+					}
+					if (mod == 0)
+					{
+						div.push_back(i);
+						break;
+					}
+				}
+				if (i == 9999)
+				{
+					return;
+				}
+			}
+			ans_mutex.lock();
+			if ((int)ans.coins.size() < input.j)
+			{
+				ans.coins.emplace_back(s, div);
+			}
+			ans_mutex.unlock();
+		}));
+		cur += 2;
+	}
+	return ans;
 }
 
 int main(int argc, char* argv[])
