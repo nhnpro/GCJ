@@ -19,24 +19,45 @@ using namespace std;
 
 struct Input
 {
+	int x;
+
 	friend istream& operator >> (istream& lhs, Input& rhs)
 	{
-		return lhs;
+		return lhs >> rhs.x;
 	}
 };
 
 struct Output
 {
+	int x;
+
 	friend ostream& operator << (ostream& lhs, const Output& rhs)
 	{
 		static int case_number = 0;
-		return lhs << "Case #" << ++case_number << ": " << endl;
+		lhs << "Case #" << ++case_number << ": ";
+		if (rhs.x == -1)
+		{
+			return lhs << "INSOMNIA" << endl;
+		}
+		return lhs << rhs.x << endl;
 	}
 };
 
 Output solve(Input input)
 {
-	return{};
+	vector<bool> met(10, false);
+	for (int i = 0; i < 2000; ++i)
+	{
+		for (int cur = i * input.x; cur > 0; cur /= 10)
+		{
+			met[cur % 10] = true;
+		}
+		if (all_of(met.begin(), met.end(), [](bool x) {return x; }))
+		{
+			return{ i * input.x };
+		}
+	}
+	return{ -1 };
 }
 
 int main(int argc, char* argv[])
