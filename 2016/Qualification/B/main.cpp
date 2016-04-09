@@ -19,24 +19,40 @@ using namespace std;
 
 struct Input
 {
+	string s;
+
 	friend istream& operator >> (istream& lhs, Input& rhs)
 	{
-		return lhs;
+		return lhs >> rhs.s;
 	}
 };
 
 struct Output
 {
+	int x;
+
 	friend ostream& operator << (ostream& lhs, const Output& rhs)
 	{
 		static int case_number = 0;
-		return lhs << "Case #" << ++case_number << ": " << endl;
+		return lhs << "Case #" << ++case_number << ": " << rhs.x << endl;
 	}
 };
 
 Output solve(Input input)
 {
-	return{};
+	int ans = 0;
+	auto s = input.s;
+	while (!all_of(s.begin(), s.end(), [](char c) {return c == '+'; }))
+	{
+		++ans;
+		int pos = s.find_first_not_of(s[0]);
+		if (pos == string::npos)
+		{
+			pos = s.size();
+		}
+		transform(s.begin(), s.begin() + pos, s.begin(), [](char c) {return c == '+' ? '-' : '+'; });
+	}
+	return{ ans };
 }
 
 int main(int argc, char* argv[])
